@@ -85,12 +85,10 @@ const Collection = dynamic(() =>
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-const Pdf = dynamic(
-  () => import('react-notion-x/build/third-party/pdf').then((m) => m.Pdf),
-  {
-    ssr: false
-  }
-)
+// Temporarily stub PDF renderer to avoid bundling `pdfjs-dist`/`canvas` which
+// causes Turbopack build failures. Restore the dynamic import when a
+// Turbopack-compatible solution is available.
+const Pdf: React.FC = () => null
 const Modal = dynamic(
   () =>
     import('react-notion-x/build/third-party/modal').then((m) => {

@@ -4,7 +4,7 @@ Suggestions and pull requests are highly encouraged. Have a look at the [open is
 
 ## Development
 
-To develop the project locally, you'll need a recent version of Node.js and `yarn` v1 installed globally.
+To develop the project locally, you'll need a recent version of Node.js (>= 25.0.0) and `yarn` v1 installed globally.
 
 To get started, clone the repo and run `yarn` from the root directory:
 
