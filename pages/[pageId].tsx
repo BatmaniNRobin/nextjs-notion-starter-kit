@@ -1,13 +1,15 @@
-import * as React from 'react'
-import { GetStaticProps } from 'next'
-import { isDev, domain } from 'lib/config'
-import { getSiteMap } from 'lib/get-site-map'
-import { resolveNotionPage } from 'lib/resolve-notion-page'
-import { PageProps, Params } from 'lib/types'
-import { NotionPage } from 'components'
+import { type GetStaticProps } from 'next'
 
-export const getStaticProps: GetStaticProps<PageProps, Params> = async (context) => {
-  const rawPageId = context.params.pageId as string
+import { NotionPage } from '@/components/NotionPage'
+import { domain, isDev, pageUrlOverrides } from '@/lib/config'
+import { getSiteMap } from '@/lib/get-site-map'
+import { resolveNotionPage } from '@/lib/resolve-notion-page'
+import { type PageProps, type Params } from '@/lib/types'
+
+export const getStaticProps: GetStaticProps<PageProps, Params> = async (
+  context
+) => {
+  const rawPageId = context.params?.pageId as string
 
   try {
     const props = await resolveNotionPage(domain, rawPageId)
@@ -32,13 +34,17 @@ export async function getStaticPaths() {
 
   const siteMap = await getSiteMap()
 
+  // Combine sitemap paths with URL overrides (e.g., /articles, /notes)
+  // URL overrides might not be in the sitemap if not directly linked from root
+  const allPageIds = [
+    ...new Set([
+      ...Object.keys(siteMap.canonicalPageMap),
+      ...Object.keys(pageUrlOverrides)
+    ])
+  ]
+
   const staticPaths = {
-    paths: Object.keys(siteMap.canonicalPageMap).map((pageId) => ({
-      params: {
-        pageId
-      }
-    })),
-    // paths: [],
+    paths: allPageIds.map((pageId) => ({ params: { pageId } })),
     fallback: true
   }
 
@@ -46,6 +52,6 @@ export async function getStaticPaths() {
   return staticPaths
 }
 
-export default function NotionDomainDynamicPage(props) {
+export default function NotionDomainDynamicPage(props: PageProps) {
   return <NotionPage {...props} />
 }
